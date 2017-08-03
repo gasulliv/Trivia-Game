@@ -1,221 +1,184 @@
+
+var panel = $("#quiz-area");
+var countStartNumber = 30;
+
 // Question set
-  var questions = [
-  {
+var questions = [{
+  question: "The Boston Terrier was the first ever breed to be accepted into the AKC. What year was it accepted?",
+  answers: ["1890", "1901", "1893", "1777"],
+  correctAnswer: "1893",
+  image: "assets/images/q4.gif"
+}, {
+  question: "This Disney short released in 2013 featured a Boston Terrier",
+  answers: ["Feast", "What a Horse", "Piper", "Inner Workings"],
+  correctAnswer: "Feast",
+  image: "assets/images/q3.gif"
+}, {
+  question: "Boston Terriers are usually considered to have what energy level?",
+  answers: ["High", "Medium", "Low", "Lazy"],
+  correctAnswer: "Medium",
+  image: "assets/images/q2.gif"
+}, {
+  question: "Boston Terriers usually need this many minutes of exercise a day",
+  answers: ["15", "30", "45", "10"],
+  correctAnswer: "30",
+  image: "assets/images/q5.gif"
+}, {
+  question: "Why are Boston Terriers called the American Gentlemen?",
+  answers: ["They originated in Boston, Mass", "They were originally owned mostly by the wealthy", "Their unique looking gentlemen-suit like coat", "A and C"],
+  correctAnswer: "A and C",
+  image: "assets/images/finale.gif"
+}, {
+  question: "Boston terriers were originally bred to be fighting dogs but due to their smaller stature, speed, energy level, keen sense of smell and affectionate and docileness, they eventually were bred to be housepets and _________ ",
+  answers: ["Show Dogs", "Rat Catchers", "Firefighting Dogs", "Police Dogs"],
+  correctAnswer: "Rat Catchers",
+  image: "assets/images/q7.gif"
+}, {
+  question: "Boston Terriers, like pugs and bulldogs, have short noses which make them what kind of dog?",
+  answers: ["Bronchiatic", "Brachycephalic", "Loud", "Friendly"],
+  correctAnswer: "Brachycephalic",
+  image: "assets/images/q6.gif"
+}];
 
-    question:"Which one of these men was responsible for animating the original Mickey Mouse?",
-    answers: ["Ub Iwerks", "Frank Thomas", "Walt Disney", "John Lasseter"],
-    correct_index: 0
-
-  },
-
-
-  {
-    question:"Ub Iwerks, early's Disney's most efficient animators, could alone draw about how many frames a day?",
-    answers: ["50", "200", "100", "80"],
-    correct_index: 3
-
-  },
-
-  {
-    question:"What was the first Disney movie to feature 3D animation?",
-    answers: ["The Rescuers Down Under", "The Great Mouse Detective", "Toy Story", "101 Dalmations"],
-    correct_index: 1
-  },
-
-  {
-    question:"Which Disney short became famous for being the first to feature synchonized sound?",
-    answers: ["Steamboat Willie", "Plane Crazy", "Oh What a Knight!", "The Old Mill"],
-    correct_index: 0
-  },
-
-  {
-    question:"Which of the Disney rides was designed in it's entirety by it's only leading female artist?",
-    answers: ["The Teacup Ride", "The Haunted Mansion", "Pirates of the Carribbean", "It's a Small World"],
-    correct_index: 3
-  }
-
-  ];
-
-// Variable that will hold the setInterval
+// Variable to hold our setInterval
 var timer;
 
-var correct = 0;
-var incorrect = 0;
-var timeLeft = 120;
- var missed = (questions.length - (incorrect + correct));
+var game = {
 
-// purpose of this function:
-//   called once for each passing second of time to display, and track
-//   a countdown for the user.
-  function countdown() {
-  // todo: decrement the counter variable
+  questions: questions,
+  currentQuestion: 0,
+  counter: countStartNumber,
+  correct: 0,
+  incorrect: 0,
 
-      timer = setInterval(timeLeft, 1000);
+  countdown: function() {
+    this.counter--;
+    $("#counter-number").html(this.counter);
+    if (this.counter === 0) {
+      console.log("TIME UP");
+      this.timeUp();
+    }
+  },
 
+  loadQuestion: function() {
+    //setting the timer interval and binding this countdown number
+    timer = setInterval(this.countdown.bind(this), 1000);
+    //appending the question to the panel title
+    panel.html("<h3>" + questions[this.currentQuestion].question + "</h3> <br/><br/>");
+    //looping through the questions and appending the answer button and the questions and answers to the panel
+    for (var i = 0; i < questions[this.currentQuestion].answers.length; i++) {
+      panel.append("<button class='answer-button' id='button' data-name='" + questions[this.currentQuestion].answers[i]
+      + "'>" + questions[this.currentQuestion].answers[i] + "</button>");
+    }
+  },
+
+  nextQuestion: function() {
+    //starting the counter
+    this.counter = window.countStartNumber;
+    $("#counter-number").html(this.counter);
+    //advancing to the next question
+    this.currentQuestion++;
+    //binding the next loaded question to the panel
+    this.loadQuestion.bind(this)();
+  },
+
+  timeUp: function() {
+    //clearing the timer at the time up
+    clearInterval(window.timer);
+    //appending the oounter to the html
+    $("#counter-number").html(this.counter);
+    //the header message
+    panel.html("<h2>Out of Time!</h2>");
+    //appending the correct answer
+    panel.append("<h3>The Correct Answer was: " + questions[this.currentQuestion].correctAnswer);
+    //appending the question image
+    panel.append("<img src='" + questions[this.currentQuestion].image + "' />");
+
+    if (this.currentQuestion === questions.length - 1) {
+      setTimeout(this.results, 3 * 1000);
+    }
+    else {
+      setTimeout(this.nextQuestion, 3 * 1000);
+    }
+  },
+
+  results: function() {
+    //clearing the timer
+    clearInterval(window.timer);
+    //appending the header title
+    panel.html("<h2>All done, heres how you did!</h2>");
+    //appending the counter
+    $("#counter-number").html(this.counter);
+    //showing correcting answers
+    panel.append("<h3>Correct Answers: " + this.correct + "</h3>");
+    panel.append("<h3>Incorrect Answers: " + this.incorrect + "</h3>");
+    panel.append("<h3>Unanswered: " + (questions.length - (this.incorrect + this.correct)) + "</h3>");
+    panel.append("<br><button id='start-over'>Start Over?</button>");
+  },
+
+  clicked: function(e) {
+    clearInterval(window.timer);
+    if ($(e.target).attr("data-name") === questions[this.currentQuestion].correctAnswer) {
+      this.answeredCorrectly();
+    }
+    else {
+      this.answeredIncorrectly();
+    }
+  },
+
+  answeredIncorrectly: function() {
+    //increment incorrect questions
+    this.incorrect++;
+    //clear the time
+    clearInterval(window.timer);
+    //appending incorrect data
+    panel.html("<h2>Darn!</h2>");
+    panel.append("<h3>The Correct Answer was: " + questions[this.currentQuestion].correctAnswer + "</h3>");
+    panel.append("<img src='" + questions[this.currentQuestion].image + "' />");
+
+    if (this.currentQuestion === questions.length - 1) {
+      setTimeout(this.results.bind(this), 3 * 1000);
+    }
+    else {
+      setTimeout(this.nextQuestion.bind(this), 3 * 1000);
+    }
+  },
+
+  answeredCorrectly: function() {
+    //cleaing the interval
+    clearInterval(window.timer);
+    //showing amount correct
+    this.correct++;
+    //appending correct data
+    panel.html("<h2>Nice Job!</h2>");
+    panel.append("<img src='" + questions[this.currentQuestion].image + "' />");
+
+    if (this.currentQuestion === questions.length - 1) {
+      setTimeout(this.results.bind(this), 3 * 1000);
+    }
+    else {
+      setTimeout(this.nextQuestion.bind(this), 3 * 1000);
+    }
+  },
+
+  reset: function() {
+    this.currentQuestion = 0;
+    this.counter = countStartNumber;
+    this.correct = 0;
+    this.incorrect = 0;
+    this.loadQuestion();
   }
-
-  function timeleft () {
-
-  // todo: set the counter-number element in the dom to be the counter number
-
-      timeLeft--;
-
-  // todo: when counter is 0, call done().
-
-      if(timeLeft === 0){
-
-      //then stop the timer
-
-        done();
-
-    }
-  }
-
-// purpose of this function:
-//   called to begin the game (which begins when they click the 'start' button)
-  function start() {
-
-      // todo: start the timer (setInterval) using the countdown function as a callback
-
-      countdown();
-
-       // todo: prepend html to the sub-wrapper element in the dom to show an initial countdown time
-
-      $("#sub-wrapper").prepend("<h2>" + timeLeft + "</h2>");
-
-       // todo: remove the #start button element from the dom (since the game is now starting)
-
-       $("#start").remove();
-
-       // loop thru the questions array
-      for (var i = 0; i < questions.length; i++) {
-
-        // todo: append html to the dom's #quiz-area that displays the question
-
-         $("#quiz-area").append(questions.length);
-         console.log(questions[i]);
-
-      // // loop thru the answers in the question
-
-       for (var j = 0; j < questions[i].answers.length; j++) {
-
-      // append html to the dom's #quiz-area that displays the answers
-
-       $("#quiz-area").append("<input type='radio' name='question-" + i +
-       "' value='" + questions[i].answers[j] + "''>" + questions[i].answers[j]);
-
-       console.log(questions[i].answers.length);
-
-       }
-      }
-
-      // todo: append html to the dom's #quiz-area that displays a done button with an id='done'
-
-      $("#quiz-area").append("<input type = 'button' name= 'done' ");
-  }
-
-
-// purpose of this function:
-//   called to end the game (which ends when they click the 'done' button)
-function done() {
-
-  // tally the correct and incorrect answers for the first question
-  $.each($("input[name='question-0']:checked"), function() {
-    if ($(this).val() === questions[0].correct_index) {
-      correct++;
-    }
-    else {
-      incorrect++;
-    }
-  });
-
-  // todo: tally the correct and incorrect answers for the remaining questions
-
-   $.each($("input[name='question-1']:checked"), function() {
-    if ($(this).val() === questions[3].correct_index) {
-      correct++;
-    }
-    else {
-      incorrect++;
-    }
-  });
-
-
-  $.each($("input[name='question-1']:checked"), function() {
-    if ($(this).val() === questions[1].correct_index) {
-      correct++;
-    }
-    else {
-      incorrect++;
-    }
-  });
-
-
-  $.each($("input[name='question-1']:checked"), function() {
-    if ($(this).val() === questions[0].correct_index) {
-      correct++;
-    }
-    else {
-      incorrect++;
-    }
-  });
-
-$.each($("input[name='question-1']:checked"), function() {
-    if ($(this).val() === questions[3].correct_index) {
-      correct++;
-    }
-    else {
-      incorrect++;
-    }
-  });
-
-  // todo: call function to display the user's quiz results
-
-  result();
-
-}
-
-// purpose of this function:
-//   displays the user's quiz results
-function result() {
-
-  // todo: stop the timer using clearInterval
-
-    timer(clearInterval);
-
-  // todo: remove the dom element targeted by $("#sub-wrapper h2")
-  //       (this is what we created in the start() function above)
-
-  ("<h2>" + timeLeft + "</h2").remove();
-
-  // todo: replace the contents of the dom element #quiz-area with the results
-  //       of the quiz.
-  //       hint: the results are held in the variables: 'correct', 'incorrect', and
-  //             the unanswered questions can be derived by:
-  //             (questions.length - (incorrect + correct))
-
-  $("#quiz-area").prepend("You got " + correct + " correct");
-
-  $("#quiz-area").append("You got " + incorrect + "incorrect");
-
-  $("#quiz-area"). append("You missed" + missed + " many questions");
-}
+};
 
 // CLICK EVENTS
 
-$(document).on("click", "#start", function() {
+$(document).on("click", "#start-over", game.reset.bind(game));
 
-  // todo: call function to start the game
-
-  start();
-
+$(document).on("click", ".answer-button", function(e) {
+  game.clicked.bind(game, e)();
 });
 
-
-$(document).on("click", "#done", function() {
-
-  // todo: call function to end the game
-
-  done();
-
+$(document).on("click", "#start", function() {
+  $("#sub-wrapper").prepend("<h2>Time Remaining: <span id='counter-number'>30</span> Seconds</h2>");
+  game.loadQuestion.bind(game)();
 });

@@ -1,0 +1,122 @@
+html,
+body {
+
+  height:100%;
+  width: 100%;
+  margin:0px;
+  padding:0px;
+  overflow-x: hidden;
+
+}
+
+body {
+
+  background-image: url(../images/trivia.jpg);
+  background-size: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: black;
+   -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+  text-align: center;
+  font-family: 'Fjalla One', sans-serif
+
+}
+
+#wrapper {
+
+  /*margin:5% auto;*/
+  margin-top: 5%;
+  margin-left: 7%;
+  background-color: white;
+  width:80%;
+  /*height: 95%;*/
+  box-sizing: border-box;
+  padding:3%;
+
+
+}
+
+#sub-wrapper {
+
+  position: relative;
+  top:15%;
+
+}
+
+button {
+
+  display:block;
+  width:50%;
+  height:20%;
+  margin: 0 auto;
+  border:none;
+  cursor: pointer;
+  background:transparent;
+  font-size: 20px;;
+
+}
+
+img {
+
+  height:200px;
+
+}
+
+h1 {
+
+  font-family: 'Lobster', cursive;
+  font-size: 4.5em;
+  font-weight: bold;
+  color:black;
+  padding-top:1%;
+  padding-bottom: 2%;
+
+}
+
+h2 {
+
+  font-size: 35px;
+  margin-bottom: 25px;
+
+}
+
+h3 {
+
+  font-size: 25px;
+  margin-bottom: 10px;
+
+}
+
+#start {
+
+  margin-top: 2%;
+  border:2px solid #8acdc3;
+  background: white;
+  color:#8acdc3;
+  padding:1%;
+  width:20%;
+
+}
+
+#start:hover {
+
+
+  background-color: #8acdc3;
+  color:white;
+
+}
+
+button:hover {
+
+  border:2px solid #8acdc3;
+  background: white;
+  color:#8acdc3;
+
+}
+
+.boston {
+  padding:1%;
+}
